@@ -4,7 +4,6 @@
 #define DustSensor true  // true or false dependent upon if dust sensor present, true by default as we cannot handshake
 
 #include "Wire.h"
-#include <SPI.h>
 #include <PinChangeInterrupt.h>
 
 //  Width Guide      "---------------------"
@@ -15,7 +14,15 @@ char ScreenFooter[] = " Telaire Technology";
 #ifdef OELCD_OP
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-#include "OELCD.h"
+
+#define SCREEN_WIDTH 128          // OLED display width, in pixels
+#define SCREEN_HEIGHT 64          // OLED display height, in pixels
+#define SCREEN_I2C_ADDRESS  0x3C  // I2C Address of Oled
+#define SCREEN_RESET  -1          // reset pin, -1 for not used
+#define SCREEN_I2C_SPEED 100000UL    // i2c speed for display
+
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, SCREEN_RESET);
+
 #endif
 
 #include "T9602.h"
@@ -40,8 +47,8 @@ void setup()
   Wire.begin();
 
 #ifdef OELCD_OP
-  // by default, we'll generate the high voltage from the 3.3v line internally
-  display.begin(SSD1306_SWITCHCAPVCC);
+  // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
+  display.begin(SSD1306_SWITCHCAPVCC, SCREEN_I2C_ADDRESS);
   displaySetupScreen();
 #endif
 
